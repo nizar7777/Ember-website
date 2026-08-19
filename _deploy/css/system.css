@@ -1,0 +1,521 @@
+/* ======================================================================
+   EMBER — INTERACTION SYSTEM
+   ======================================================================
+   Focus, tap targets and motion. Loaded last so it wins over both the
+   Webflow export and the page stylesheets.
+
+   The export shipped with a single focus-visible rule in roughly 7,600
+   lines of CSS, and several controls actively removed the outline
+   without putting anything back. Everything reachable by keyboard now
+   shows where it is.
+   ====================================================================== */
+
+/* ----------------------------------------------------------------------
+   Skip link — first thing in the tab order, invisible until focused.
+   ---------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  background-color: var(--ember-accent);
+  color: var(--ember-on-accent);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 20px;
+  border-radius: 0 0 10px;
+  transform: translateY(-120%);
+  transition: transform var(--ember-dur) var(--ember-ease);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* ----------------------------------------------------------------------
+   Focus ring
+   :focus-visible only, so a mouse click on a button does not leave a
+   ring behind but a Tab key press does.
+   ---------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ember-focus-color);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Controls that sit directly on an orange fill need the ring to read
+   against the orange rather than against the page. */
+.buy-now:focus-visible,
+.submit-button:focus-visible,
+.footer-button-wrap:focus-visible,
+.cd-btn-primary:focus-visible,
+.filter-btn.is-active:focus-visible {
+  outline-color: var(--ember-on-accent);
+  outline-offset: -4px;
+}
+
+/* Inputs already signal focus with a border colour change; the ring is
+   additive rather than a replacement, because a colour shift alone is
+   not a reliable focus indicator. */
+.cd-input:focus-visible,
+.cd-select:focus-visible,
+.cd-textarea:focus-visible,
+.w-input:focus-visible,
+.text-input:focus-visible {
+  outline: 2px solid var(--ember-accent);
+  outline-offset: 1px;
+  border-color: var(--ember-accent);
+}
+
+/* Swatches are round, so a square ring looks broken on them. */
+.cd-swatch:focus-visible,
+.pm-swatch:focus-visible {
+  outline: 2px solid var(--ember-ink);
+  outline-offset: 3px;
+  border-radius: 50%;
+}
+
+/* The export set `outline: none` on these without providing a
+   replacement, which is the one thing a focus style must never do. */
+.cd-icon-btn:focus-visible {
+  outline: 2px solid var(--ember-ink);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------------------
+   Tap targets
+   Everything interactive clears 44px. Where the visible shape should
+   stay small — nav labels, view toggles — the target is grown with
+   padding or a pseudo-element rather than by inflating the design.
+   ---------------------------------------------------------------------- */
+
+/* Nav links measured 20px tall. The pill's own height is what is on
+   screen; this just makes the hit area match it. */
+.link-block-2,
+.link-block-3,
+.link-block-4,
+.link-block-5,
+.link-block-6,
+.link-block-7,
+.link-block-8 {
+  display: flex;
+  align-items: center;
+  min-height: var(--ember-tap-min);
+}
+
+.dropdown-link,
+.dropdown-link-2,
+.dropdown-link-3,
+.dropdown-link-4,
+.dropdown-link-5,
+.dropdown-link-6 {
+  display: flex;
+  align-items: center;
+  min-height: var(--ember-tap-min);
+}
+
+/* The cart icon is a 27px image inside a link with no padding. */
+.link-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ember-tap-min);
+  min-height: var(--ember-tap-min);
+}
+
+/* Front/back toggle was 34px. */
+.cd-view-btn,
+.pm-view-btn {
+  min-height: var(--ember-tap-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colour swatches were 30px. The dot stays its designed size; the
+   touchable area around it grows. */
+.cd-swatch,
+.pm-swatch {
+  position: relative;
+}
+
+.cd-swatch::after,
+.pm-swatch::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ember-tap-min);
+  height: var(--ember-tap-min);
+  transform: translate(-50%, -50%);
+}
+
+/* Footer logo link measured 35px. */
+.footer-logo-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ember-tap-min);
+}
+
+/* "Start designing" CTA pill measured 35px. */
+a.service-cta-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ember-tap-min);
+}
+
+/* The phone and email links wrap a heading, so the link box collapsed to
+   16px around it. */
+.contact-header-number-t,
+.contact-header-email-t {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ember-tap-min);
+}
+
+/* Social icons measured 40px. */
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ember-tap-min);
+  min-height: var(--ember-tap-min);
+}
+
+/* The mobile menu button is an image in a bare div. */
+.dropdown-toggle-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ember-tap-min);
+  min-height: var(--ember-tap-min);
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------------------
+   Motion
+   One curve and one duration scale, so hovers across the site feel like
+   they belong to the same object. The export had transitions ranging
+   from .15s to .4s with four different easings.
+   ---------------------------------------------------------------------- */
+.page-title,
+.filter-btn,
+.buy-now,
+.div-block-4,
+.product-card,
+.cd-icon-btn,
+.cd-view-btn,
+.cd-btn,
+.contact-link,
+.submit-button,
+.footer-button-wrap,
+.shirt-shot-hover {
+  transition-duration: var(--ember-dur);
+  transition-timing-function: var(--ember-ease);
+}
+
+/* ----------------------------------------------------------------------
+   Contrast: text sitting on the accent fill
+   Cream on #ff4a1f measures 2.79:1 — it fails AA at every size. Rather
+   than desaturating the orange (which is the brand) these take the warm
+   near-black, which reads 5.46:1 on the same fill.
+
+   Collected here rather than fixed rule-by-rule across six stylesheets,
+   so the rule "anything on an orange fill uses --ember-on-accent" has a
+   single place to live.
+   ---------------------------------------------------------------------- */
+.cd-btn-primary,
+.cd-btn-primary:hover,
+.cd-view-btn.is-active,
+.pm-view-btn.is-active,
+.cd-swatch.is-active,
+.add-btn,
+.oe-product-tile.is-selected,
+.oe-custom-tile.is-selected,
+.blog-card-date,
+.cliq-reminder-link,
+.footer-button-wrap,
+.submit-button,
+.service-cta-pill .service-t {
+  color: var(--ember-on-accent);
+}
+
+/* The collection marquee is orange type on the cream band — the same
+   2.79:1 pair, inverted. The deeper ember reads 3.31:1, which clears the
+   threshold for large text. */
+.marquee-text-copy {
+  color: var(--ember-accent-on-light);
+}
+
+/* The marquee ribbons took their Anton and their 50px from the `h1`
+   element rule. They were 30 h1 elements on one page, which wrecked the
+   heading outline, so they are spans now — and spans get none of that.
+   State it here instead of relying on the tag. */
+.marquee-text,
+.marquee-text-copy {
+  font-family: Anton, sans-serif;
+  font-size: 50px;
+  line-height: var(--_size---h2--line-height);
+  letter-spacing: var(--_size---h1--letter-spacing);
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Icon buttons that fill with orange on hover/focus carry an SVG using
+   currentColor, so the stroke needs the same treatment as text. */
+.cd-icon-btn:hover,
+.cd-icon-btn:focus-visible {
+  color: var(--ember-on-accent);
+}
+
+/* ----------------------------------------------------------------------
+   Cart badge
+   The badge is absolutely positioned for the desktop cart icon. In the
+   mobile dropdown it sits after the word BASKET, where absolute
+   positioning would pin it to the dropdown panel instead.
+   ---------------------------------------------------------------------- */
+.w-dropdown-link .cart-badge {
+  position: static;
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.cart-badge {
+  /* 11px cream on orange is 2.79:1. */
+  color: var(--ember-on-accent);
+}
+
+.cart-badge[hidden] {
+  display: none;
+}
+
+/* ----------------------------------------------------------------------
+   Page grain
+   This was images/Group-10268.png: 1440x9810px, 1.8MB, and it shipped to
+   the live site untouched because the build script's resizer only looks
+   at width. Inspecting it, the whole file is greyscale noise drawn at
+   about 6% alpha — a subtle grain over the warm black.
+
+   Same effect from an inline SVG turbulence tile: no HTTP request, a few
+   hundred bytes, and it tiles at any viewport height instead of being a
+   fixed 9810px strip.
+   ---------------------------------------------------------------------- */
+.body-2,
+.body-4 {
+  background-color: var(--ember-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
+  background-position: 0 0;
+  background-repeat: repeat;
+  background-size: 160px 160px;
+}
+
+/* ----------------------------------------------------------------------
+   Viewport height
+   These were fixed `height: 100vh`. Two problems: content taller than the
+   viewport gets clipped rather than growing the section, and on mobile
+   100vh is the height *without* the browser's address bar, so the section
+   is always taller than what you can actually see.
+
+   min-height lets the content win, and dvh tracks the visible area as the
+   chrome shows and hides. The vh line stays as the fallback for browsers
+   without dvh.
+   ---------------------------------------------------------------------- */
+.team,
+._404-title-wrap,
+.utility-page-wrap {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ----------------------------------------------------------------------
+   Arabic reviews
+   The customer reviews are mostly Arabic on an English page. Tagged
+   lang="ar" dir="rtl" in the markup; this gives them a face that actually
+   has Arabic glyphs, since Bebas Neue and Humane do not.
+   ---------------------------------------------------------------------- */
+[lang="ar"] {
+  font-family: "IBM Plex Sans", "Segoe UI", Tahoma, sans-serif;
+  line-height: 1.7;
+}
+
+/* All four reviews show now. Two were hidden behind a .none class,
+   including the only English one. */
+.testimonial-item {
+  text-align: start;
+}
+
+/* Undo starts with nothing to undo, so it needs a visibly inert state
+   rather than looking pressable and doing nothing. */
+.cd-icon-btn:disabled {
+  opacity: .38;
+  cursor: default;
+}
+
+.cd-icon-btn:disabled:hover {
+  color: var(--ember-ink-muted);
+  border-color: var(--ember-hairline);
+  background-color: var(--ember-surface-raised);
+}
+
+/* ----------------------------------------------------------------------
+   Store toolbar — category filters on the left, sort on the right.
+   ---------------------------------------------------------------------- */
+.store-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+}
+
+.store-toolbar .store-filter-bar {
+  padding-bottom: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.store-toolbar .store-filter-bar[hidden] {
+  display: none;
+}
+
+.store-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.store-sort-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ember-ink-dim);
+}
+
+.store-sort {
+  min-height: var(--ember-tap-min);
+  padding: 0 34px 0 14px;
+  border: 1px solid var(--ember-hairline-strong);
+  border-radius: 20px;
+  background-color: var(--ember-surface-raised);
+  color: var(--ember-ink);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  cursor: pointer;
+  /* Native arrow is the OS default and reads as a form control; this one
+     matches the rest of the chrome. */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23b6a99a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.store-sort:hover {
+  border-color: var(--ember-accent);
+}
+
+.store-count {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ember-ink-dim);
+  padding-bottom: 18px;
+}
+
+.store-count[hidden] {
+  display: none;
+}
+
+/* ----------------------------------------------------------------------
+   Skeletons
+   Same footprint as a real product card, so the grid does not reflow when
+   the sheet data arrives.
+   ---------------------------------------------------------------------- */
+.product-card-skeleton {
+  pointer-events: none;
+}
+
+.product-card-skeleton:hover {
+  transform: none;
+  box-shadow: 1px 2px #0000001a;
+}
+
+.skeleton {
+  border-radius: 8px;
+  background-color: #ffffff0f;
+  background-image: linear-gradient(90deg, #ffffff00 0%, #ffffff14 50%, #ffffff00 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: ember-skeleton 1.4s ease-in-out infinite;
+}
+
+.skeleton-thumb {
+  width: 100%;
+  aspect-ratio: 2402 / 3481;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+}
+
+.skeleton-line-name { width: 72%; }
+.skeleton-line-price { width: 38%; height: 12px; }
+
+.skeleton-btn {
+  height: 44px;
+  border-radius: 20px;
+  margin-top: auto;
+}
+
+@keyframes ember-skeleton {
+  from { background-position: 150% 0; }
+  to   { background-position: -50% 0; }
+}
+
+/* A shimmer that never stops is exactly the kind of motion to drop. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background-image: none;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .store-toolbar {
+    gap: 12px;
+  }
+
+  .store-sort-wrap {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .store-sort {
+    flex: 1 1 auto;
+  }
+}
+
+/* ----------------------------------------------------------------------
+   Text selection — a small brand moment in a place most sites forget.
+   ---------------------------------------------------------------------- */
+::selection {
+  background-color: var(--ember-accent);
+  color: var(--ember-on-accent);
+}

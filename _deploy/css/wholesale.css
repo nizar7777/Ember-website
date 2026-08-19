@@ -1,0 +1,170 @@
+/* ---------------------------------------------------------------------
+   Wholesale nav button + enquiry popup (homepage)
+--------------------------------------------------------------------- */
+.wholesale-nav-btn {
+  font-family: Anton, sans-serif;
+  font-size: 20px;
+  line-height: 100%;
+  color: var(--_color---contact-button);
+  background: none;
+  border: 1px solid var(--_color---contact-button);
+  border-radius: 8px;
+  padding: 9px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  filter: drop-shadow(0 0 4px #000);
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+
+.wholesale-nav-btn:hover,
+.wholesale-nav-btn:focus-visible {
+  color: var(--_color---white);
+  background-color: var(--_color---dib-oringe);
+  border-color: var(--_color---dib-oringe);
+  outline: none;
+}
+
+/* The nav collapses to a burger below this, where the mobile menu link
+   takes over. */
+@media screen and (max-width: 991px) {
+  .wholesale-nav-btn {
+    display: none;
+  }
+}
+
+/* Standalone wholesale.html — just a backdrop for the popup to sit on. */
+.ws-standalone {
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--_color---text-color-two);
+}
+
+.ws-standalone-logo {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 1;
+  display: block;
+}
+
+.ws-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, .72);
+  z-index: 998;
+}
+
+.ws-backdrop[hidden],
+.ws-modal[hidden] {
+  display: none;
+}
+
+.ws-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(680px, 92vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--_color---text-color-two);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 18px;
+  z-index: 999;
+}
+
+body.ws-open {
+  overflow: hidden;
+}
+
+.ws-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--_color---text-box-border);
+  background-color: var(--_color---form-color);
+  color: var(--_color---text-color);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease;
+}
+
+.ws-close:hover {
+  color: var(--_color---dib-oringe);
+  border-color: var(--_color---dib-oringe);
+}
+
+.ws-body {
+  padding: 40px;
+}
+
+.ws-eyebrow {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---dib-oringe);
+  margin-bottom: 10px;
+}
+
+.ws-title {
+  font-family: Anton, sans-serif;
+  font-size: 40px;
+  line-height: 100%;
+  color: var(--_color---white);
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+.ws-intro {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 15px;
+  line-height: 155%;
+  color: var(--_color---text-color);
+  margin: 0 0 26px;
+  max-width: 52ch;
+}
+
+.ws-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ws-row {
+  display: flex;
+  gap: 12px;
+}
+
+.ws-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.cd-form-status.is-success {
+  color: #7bc47f;
+}
+
+.cd-form-status.is-error {
+  color: var(--_color---dib-oringe);
+}
+
+@media screen and (max-width: 600px) {
+  .ws-body {
+    padding: 30px 22px;
+  }
+
+  .ws-title {
+    font-size: 30px;
+  }
+
+  .ws-row {
+    flex-direction: column;
+  }
+}

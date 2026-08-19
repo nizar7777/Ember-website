@@ -1,0 +1,63 @@
+.link-block.w-inline-block {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: var(--_color---dib-oringe);
+  color: var(--_color---white);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  z-index: 10;
+}
+
+/* Shared quantity-stepper / remove controls, reused on the checkout page's
+   order summary list (see css/checkout.css for the surrounding layout). */
+.cart-step-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--_color---text-box-border);
+  background: none;
+  color: var(--_color---white);
+  cursor: pointer;
+  font-family: "IBM Plex Mono", sans-serif;
+  line-height: 1;
+}
+
+.cart-step-btn:hover {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+.cart-item-qty {
+  color: var(--_color---white);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.cart-remove-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.cart-remove-btn:hover {
+  color: var(--_color---dib-oringe);
+}

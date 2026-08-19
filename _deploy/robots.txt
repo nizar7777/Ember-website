@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Internal order-logging tool. Also carries a noindex meta tag, and is
+# excluded from the deploy build entirely — this is belt and braces.
+Disallow: /order-entry.html
+
+# Webflow export leftovers with no content on them.
+Disallow: /detail_category.html
+Disallow: /detail_product.html
+Disallow: /detail_sku.html
+Disallow: /order-confirmation.html
+Disallow: /paypal-checkout.html
+Disallow: /401.html
+
+Sitemap: https://ember-jo.netlify.app/sitemap.xml

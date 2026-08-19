@@ -1,0 +1,478 @@
+.cd-section {
+  padding: 60px 20px 140px;
+  position: relative;
+  z-index: 2;
+}
+
+.cd-container {
+  max-width: 1200px;
+}
+
+.cd-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.cd-stage-col {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cd-stage-row {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+}
+
+.cd-icon-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cd-icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--_color---text-box-border);
+  background-color: var(--_color---form-color);
+  color: var(--_color---text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+
+.cd-icon-btn:hover, .cd-icon-btn:focus-visible {
+  color: var(--_color---white);
+  border-color: var(--_color---dib-oringe);
+  background-color: var(--_color---dib-oringe);
+  outline: none;
+}
+
+.cd-stage-card {
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cd-stage-wrap {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 400 / 580;
+}
+
+/* Fabric injects .canvas-container between the wrapper and the canvases at
+   the canvas's pixel size. Left alone it keeps its 400px width inside a
+   narrower phone viewport and pushes the whole design stage off screen.
+   js/custom-design.js drives the actual pixel values on resize; these
+   rules stop it overflowing in the gap before that runs. */
+.cd-stage-wrap .canvas-container {
+  width: 100% !important;
+  max-width: 100%;
+  height: auto !important;
+  aspect-ratio: 400 / 580;
+}
+
+.cd-stage-wrap .canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.cd-view-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 10px;
+  background-color: var(--_color---form-color);
+}
+
+.cd-view-btn {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+  background: none;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 22px;
+  cursor: pointer;
+  transition: color .15s ease, background-color .15s ease;
+}
+
+.cd-view-btn:hover {
+  color: var(--_color---text-color);
+}
+
+.cd-view-btn.is-active {
+  color: var(--_color---white);
+  background-color: var(--_color---dib-oringe);
+}
+
+.cd-stage-wrap canvas {
+  border-radius: 8px;
+  max-width: 100%;
+  cursor: default;
+}
+
+.cd-stage-hint {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--_color---text-color-three);
+  text-align: center;
+}
+
+.cd-color-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cd-color-label {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color);
+}
+
+.cd-swatches {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cd-swatch-divider {
+  width: 1px;
+  align-self: stretch;
+  background-color: var(--_color---text-box-border);
+  margin: 0 2px;
+}
+
+.cd-swatch-group-label {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+}
+
+/* Washed/distressed fabrics get a square-ish swatch so they read as a
+   different shirt type, not just another solid color. */
+.cd-swatch.is-washed {
+  border-radius: 7px;
+}
+
+.cd-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--_color---text-box-border);
+  cursor: pointer;
+  padding: 0;
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+.cd-swatch:hover {
+  transform: translateY(-2px);
+}
+
+.cd-swatch.is-active {
+  border-color: var(--_color---dib-oringe);
+}
+
+.cd-tools-col {
+  flex: 1 1 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.cd-tool-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cd-tool-label {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---dib-oringe);
+}
+
+.cd-tool-row {
+  display: flex;
+  gap: 12px;
+}
+
+/* Numbered steps for the add-text flow. The order type -> style -> add
+   isn't guessable from three loose controls, so it's spelled out. */
+.cd-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cd-field-step {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--_color---text-box-border);
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cd-field-controls {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cd-field .cd-input,
+.cd-field .cd-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.cd-btn-add {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.cd-btn-add.is-done {
+  background-color: #7bc47f;
+}
+
+.cd-hint {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  line-height: 150%;
+  color: var(--_color---text-color-three);
+  margin: 2px 0 0 32px;
+}
+
+.cd-color-name {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  color: var(--_color---white);
+}
+
+.cd-input, .cd-select {
+  width: 100%;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 15px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+}
+
+.cd-input::placeholder {
+  color: var(--_color---text-color-three);
+}
+
+.cd-input:focus, .cd-select:focus {
+  outline: none;
+  border-color: var(--_color---dib-oringe);
+}
+
+/* Must come after `.cd-input, .cd-select { width: 100% }` — same
+   specificity, so source order is what decides it. Declared above that
+   rule, the quantity box inherited the full width and pushed the size
+   select off the side of the phone. */
+.cd-qty-input {
+  width: 78px;
+  flex: 0 0 78px;
+  text-align: center;
+}
+
+/* Let the size select give way rather than forcing the row wider than
+   its container. */
+.cd-tool-row > * {
+  min-width: 0;
+}
+
+.cd-tool-row > .cd-select {
+  flex: 1 1 auto;
+}
+
+.cd-textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.cd-color-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 52px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cd-color-input::-webkit-color-swatch-wrapper {
+  padding: 4px;
+}
+
+.cd-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 5px;
+}
+
+.cd-btn {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-radius: 8px;
+  padding: 14px 20px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: box-shadow .2s ease, transform .2s ease, background-color .2s ease;
+  display: inline-block;
+}
+
+.cd-btn-primary {
+  background-color: var(--_color---dib-oringe);
+  color: var(--_color---white);
+}
+
+.cd-btn-primary:hover {
+  box-shadow: 0 0 22px 1px rgba(255, 74, 31, .5);
+  transform: translateY(-1px);
+}
+
+.cd-btn-secondary {
+  background-color: var(--_color---white);
+  color: var(--_color---text-color-two);
+}
+
+.cd-btn-secondary:hover {
+  transform: translateY(-1px);
+}
+
+.cd-btn-ghost {
+  background-color: transparent;
+  border: 1px solid var(--_color---text-box-border);
+  color: var(--_color---text-color);
+  flex: 1;
+}
+
+.cd-btn-ghost:hover {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+.cd-btn-large {
+  width: 100%;
+  padding: 18px 20px;
+  font-size: 15px;
+}
+
+.cd-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cd-upload-label {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cd-divider {
+  height: 1px;
+  background-color: var(--_color---text-box-border);
+  margin: 4px 0;
+}
+
+.cd-form-status {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.cd-form-status.is-success {
+  color: #7bc47f;
+}
+
+.cd-form-status.is-error {
+  color: var(--_color---dib-oringe);
+}
+
+@media screen and (max-width: 767px) {
+  .cd-layout {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .cd-section {
+    padding: 40px 16px 100px;
+  }
+
+  .cd-stage-col {
+    flex-basis: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .cd-stage-row {
+    flex-direction: column-reverse;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* 32px of card padding either side costs a phone more than a tenth of
+     its width, and the stage is the thing people came here to use. */
+  .cd-stage-card {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .cd-icon-rail {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+}
