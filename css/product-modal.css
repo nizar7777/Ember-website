@@ -1,0 +1,580 @@
+/* ---------------------------------------------------------------------
+   Shirt shot = mockup photo with the product's artwork laid over it.
+   The box keeps the mockups' own aspect ratio so the artwork's percentage
+   position lands on the same spot on the shirt at every size.
+--------------------------------------------------------------------- */
+.shirt-shot {
+  position: relative;
+  width: 100%;
+  /* Matches the S3-hosted mockup photos (~1433x1559), not the old local
+     2402x3481 masters — those are a different, much more tightly-cropped
+     shoot (near-full-bleed, almost no padding around the shirt) than the
+     padded hanger shots this ratio used to match. Getting this wrong
+     doesn't just letterbox; with object-fit:cover below it crops hard
+     enough to make the shirt look zoomed in and touching the frame. */
+  aspect-ratio: 1433 / 1559;
+  height: auto;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--line-bg);
+}
+
+.shirt-shot-base {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The artwork PNG is exported at the same frame/aspect ratio as the mockup
+   itself, already positioned on the shirt by whoever made the file — so it
+   just fills the same box as the mockup underneath and lines up exactly.
+   `contain` is a safety net, not the sizing mechanism: if a file is ever
+   slightly off the mockup's exact ratio, this stops it stretching. */
+.shirt-shot-design {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Real photo that fades in over the mockup while the card is hovered.
+   Pointer devices only — on touch there's no hover, so the card keeps
+   showing the mockup and the photos live in the popup instead. */
+.shirt-shot-hover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .product-card:hover .shirt-shot-hover {
+    opacity: 1;
+  }
+}
+
+/* Placeholder shown on product cards whose sheet row has no photo URL yet.
+   Matches .product-image's box so the grid keeps its rhythm. */
+.product-image-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px dashed var(--_color---text-box-border);
+  cursor: pointer;
+}
+
+.product-image-empty img {
+  width: 34px;
+  opacity: .32;
+}
+
+.product-image-empty span {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--_color---text-color-three);
+}
+
+/* Same idea inside the "Buy This" popup gallery. */
+.pm-main-image-empty {
+  object-fit: contain;
+  padding: 22%;
+  opacity: .32;
+  background-color: var(--_color---form-color);
+}
+
+/* --- popup: shirt stage, colour swatches, front/back toggle ----------- */
+.pm-stage {
+  width: 100%;
+}
+
+.pm-stage-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  aspect-ratio: 2402 / 3481;
+  border: 1px dashed var(--_color---text-box-border);
+  border-radius: 8px;
+  background-color: var(--_color---form-color);
+}
+
+.pm-stage-empty img {
+  width: 56px;
+  opacity: .3;
+}
+
+.pm-stage-empty span {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--_color---text-color-three);
+}
+
+.pm-view-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-top: 12px;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 10px;
+  background-color: var(--_color---form-color);
+  width: fit-content;
+}
+
+.pm-view-btn {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+  background: none;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: color .15s ease, background-color .15s ease;
+}
+
+.pm-view-btn:hover {
+  color: var(--_color---white);
+}
+
+.pm-view-btn.is-active {
+  color: var(--_color---white);
+  background-color: var(--_color---dib-oringe);
+}
+
+/* Thumb strip under the stage: generated mockup first, then real photos. */
+.pm-thumbs[hidden] {
+  display: none;
+}
+
+.pm-thumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pm-thumb {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--_color---form-color);
+  cursor: pointer;
+  transition: border-color .15s ease;
+}
+
+.pm-thumb:hover {
+  border-color: var(--_color---text-color);
+}
+
+.pm-thumb.is-active {
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The mockup thumb layers the artwork over a mini shirt, matching the card.
+   Selector is deliberately as specific as `.pm-thumb img` above, which
+   would otherwise stretch this overlay to fill the whole thumb. */
+.pm-thumb img.pm-thumb-design {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 34%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+
+.pm-photo {
+  width: 100%;
+  aspect-ratio: 2402 / 3481;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  background-color: var(--_color---form-color);
+}
+
+.pm-view-toggle[hidden] {
+  display: none;
+}
+
+.pm-color-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.pm-color-label {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+}
+
+.pm-color-chosen {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 14px;
+  color: var(--_color---white);
+}
+
+.pm-color-chosen.is-unset {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+}
+
+.pm-swatches {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding: 6px;
+  margin: -6px;
+  border-radius: 10px;
+  transition: box-shadow .2s ease;
+}
+
+/* Nudge for a required choice the customer skipped. */
+.pm-swatches.needs-pick {
+  box-shadow: 0 0 0 1px var(--_color---dib-oringe);
+}
+
+.product-variant-select.needs-pick {
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-status {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  min-height: 18px;
+}
+
+.pm-status.is-error {
+  color: var(--_color---dib-oringe);
+}
+
+.pm-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--_color---text-box-border);
+  padding: 0;
+  cursor: pointer;
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+/* Washed fabrics (see `washed` in js/shirt-colors.js) are a different
+   product, not just another colour — split off behind a label, same
+   pattern as the custom design tool's .cd-swatch-divider. */
+.pm-swatch-divider {
+  width: 1px;
+  align-self: stretch;
+  background-color: var(--_color---text-box-border);
+  margin: 0 2px;
+}
+
+.pm-swatch-group-label {
+  display: flex;
+  align-items: center;
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+}
+
+.pm-swatch.is-washed {
+  border-radius: 7px;
+}
+
+.pm-swatch:hover {
+  transform: translateY(-2px);
+}
+
+.pm-swatch.is-active {
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: #0a0705b3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 100000;
+}
+
+.pm-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%);
+  width: min(920px, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background-color: var(--_color---text-color-two);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 100001;
+}
+
+.pm-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+
+.pm-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--_color---text-box-border);
+  background-color: var(--_color---text-color-two);
+  color: var(--_color---text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: color .2s ease, border-color .2s ease;
+}
+
+.pm-close-btn:hover {
+  color: var(--_color---dib-oringe);
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 40px;
+}
+
+.pm-gallery {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pm-main-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: var(--line-bg);
+}
+
+.pm-thumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pm-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--_color---text-box-border);
+  transition: border-color .2s ease;
+}
+
+.pm-thumb:hover {
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-info {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pm-name {
+  font-family: Anton, sans-serif;
+  font-size: 28px;
+  color: var(--_color---white);
+  text-transform: uppercase;
+}
+
+.pm-price {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 18px;
+  color: var(--_color---dib-oringe);
+}
+
+.pm-description {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 15px;
+  line-height: 150%;
+  color: var(--_color---text-color);
+}
+
+.pm-variant-row {
+  display: flex;
+  gap: 10px;
+}
+
+.pm-notes {
+  min-height: 90px;
+  resize: vertical;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 14px;
+  padding: 14px 16px;
+}
+
+.pm-notes::placeholder {
+  color: var(--_color---text-color-three);
+}
+
+.pm-notes:focus {
+  outline: none;
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pm-qty-label {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color);
+}
+
+.pm-qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pm-qty-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--_color---text-box-border);
+  background: none;
+  color: var(--_color---white);
+  cursor: pointer;
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+.pm-qty-btn:hover {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+.pm-qty-input {
+  width: 44px;
+  height: 32px;
+  text-align: center;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  color: var(--_color---white);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 14px;
+  -moz-appearance: textfield;
+}
+
+.pm-qty-input::-webkit-outer-spin-button,
+.pm-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pm-qty-input:focus {
+  outline: none;
+  border-color: var(--_color---dib-oringe);
+}
+
+.pm-add-btn {
+  margin-top: auto;
+  background-color: var(--_color---dib-oringe);
+  color: var(--_color---white);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.pm-add-btn:hover {
+  box-shadow: 0 0 22px 1px rgba(255, 74, 31, .5);
+  transform: translateY(-1px);
+}
+
+body.pm-open {
+  overflow: hidden;
+}
+
+@media screen and (max-width: 767px) {
+  .pm-modal {
+    width: 94vw;
+    max-height: 92vh;
+  }
+
+  .pm-body {
+    padding: 28px 20px;
+    gap: 24px;
+  }
+}

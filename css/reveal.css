@@ -1,0 +1,58 @@
+/* Scroll reveal
+   ----------------------------------------------------------------------
+   Replaces the Webflow IX2 reveals on the homepage. Those bound their
+   elements and applied the hidden initial state, but never played the
+   animation back, so 79 elements — including the whole navigation bar —
+   sat at opacity 0 permanently.
+
+   The rule that matters here: content is visible by default. The hidden
+   state only applies under .has-reveal, and js/reveal.js is the only
+   thing that adds that class — and only once it has an observer ready to
+   take it off again. No script, old browser, or reduced-motion setting
+   can leave the page blank. */
+
+[data-reveal] {
+  --reveal-duration: .7s;
+  --reveal-delay: 0ms;
+  --reveal-shift: 24px;
+  --reveal-ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+.has-reveal [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-shift), 0);
+  transition: opacity var(--reveal-duration) var(--reveal-ease) var(--reveal-delay),
+              transform var(--reveal-duration) var(--reveal-ease) var(--reveal-delay);
+}
+
+.has-reveal [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* The hero display type is large enough that a 24px rise reads as a jump.
+   Fade it instead. */
+.has-reveal .hero-bottom-content-wrap[data-reveal],
+.has-reveal .about-img[data-reveal],
+.has-reveal .service-item-img[data-reveal],
+.has-reveal .testi-img[data-reveal] {
+  --reveal-shift: 0px;
+  --reveal-duration: .9s;
+}
+
+/* The nav manages its own entrance (see .nav-autohide in the main
+   stylesheet), so it must not also be a reveal target — the two would
+   fight over opacity. */
+.has-reveal .container-4[data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

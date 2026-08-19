@@ -1,0 +1,128 @@
+/* ======================================================================
+   EMBER — DESIGN TOKENS
+   ======================================================================
+   Loaded after ember-c38e0b.webflow.css so these win where they redefine
+   a Webflow variable, and before the page stylesheets so those can still
+   override a specific component.
+
+   Two jobs:
+     1. Redefine the Webflow tokens that were causing real problems
+        (fixed display sizes that never scaled, a text colour that failed
+        contrast).
+     2. Add the semantic tokens the rest of the system builds on —
+        motion, focus, colour roles, tap targets.
+
+   THE COLOUR RULE
+   Orange (--ember-accent) means one of two things and nothing else:
+   this is interactive, or this is a price. It is the only saturated
+   colour on the page. Everything else is the warm neutral ramp. Once
+   orange starts decorating things it stops signalling anything.
+   ====================================================================== */
+
+:root {
+  /* --- Type: fluid display scale ------------------------------------
+     These were fixed pixel values. The page hero was 150px at every
+     width including a 375px phone; the section headings only changed at
+     breakpoints. Interpolated between a phone and a laptop instead, so
+     there is no width where the type is wrong. */
+
+  /* Hero display — 120px at 375, 400px at 1440, capped at 480. */
+  --ember-display-xl: clamp(7.5rem, 1.34rem + 26.29vw, 30rem);
+
+  /* Page hero titles — 64px at 375, 150px at 1440. */
+  --ember-display-l: clamp(4rem, 2.1rem + 8.08vw, 11.875rem);
+
+  /* Section headings — 34px at 375, 80px at 1440. */
+  --ember-heading: clamp(2.125rem, 1.11rem + 4.32vw, 6rem);
+
+  /* Sub headings — 26px at 375, 40px at 1440. */
+  --ember-subheading: clamp(1.625rem, 1.31rem + 1.31vw, 3rem);
+
+  /* Redirect the Webflow tokens at the fluid scale so every existing
+     consumer picks it up without being touched individually. */
+  --_size---h1--font-size: var(--ember-display-xl);
+  --_size---h2--font-size: var(--ember-heading);
+  --_size---h3--font-size: var(--ember-subheading);
+
+  /* --- Colour roles --------------------------------------------------
+     Names describe the job, not the hue, so a future palette change is
+     one edit here. */
+  --ember-surface: #171310;          /* page ground */
+  --ember-surface-raised: #1f1a15;   /* cards, inputs, the nav pill */
+  --ember-surface-hover: #2a211a;
+
+  --ember-ink: #f2e9db;              /* primary text — 15.1:1 on surface */
+  --ember-ink-muted: #b6a99a;        /* body copy    —  7.9:1 */
+  --ember-ink-dim: #918475;          /* meta, labels —  5.0:1 */
+
+  --ember-accent: #ff4a1f;
+  --ember-accent-hover: #ff6a45;
+  /* For orange sitting on the cream bands. #ff4a1f on cream is 2.79:1;
+     this deeper ember reads 3.3:1 and is the exact red-orange already in
+     the logo artwork, so the two finally agree. */
+  --ember-accent-on-light: #ee3a24;
+  /* Cream on the accent measures 2.79:1 and fails AA. The warm near
+     black reads 5.46:1 on the same fill, so accent buttons take dark
+     ink rather than the orange being watered down. */
+  --ember-on-accent: #171310;
+
+  --ember-hairline: #ffffff1a;
+  --ember-hairline-strong: #ffffff33;
+
+  /* The old --_color---text-color-three was #5c5346, which is 2.43:1 on
+     the page ground — below AA for any text size. Everything reading it
+     now gets the accessible dim ink instead. */
+  --_color---text-color-three: var(--ember-ink-dim);
+
+  /* --- Motion --------------------------------------------------------
+     One curve, three durations. Anything that needs a different feel
+     probably wants a different interaction, not a different easing. */
+  --ember-ease: cubic-bezier(.22, .61, .36, 1);
+  --ember-dur-fast: 150ms;
+  --ember-dur: 240ms;
+  --ember-dur-slow: 420ms;
+
+  /* --- Focus ---------------------------------------------------------
+     A warm ring that stays visible on both the dark ground and the
+     orange fills, with an offset so it never sits on the element edge. */
+  --ember-focus-ring: 0 0 0 2px var(--ember-surface), 0 0 0 4px var(--ember-ink);
+  --ember-focus-color: var(--ember-ink);
+
+  /* --- Targets -------------------------------------------------------- */
+  --ember-tap-min: 44px;
+}
+
+/* ----------------------------------------------------------------------
+   Display type
+   The hero size was declared five times — once at base and again inside
+   four media queries — which is why it drifted. One fluid declaration
+   replaces all five.
+   ---------------------------------------------------------------------- */
+
+.hero-bottom-h1 {
+  font-size: var(--ember-display-xl);
+}
+
+.page-title-title {
+  font-size: var(--ember-display-l);
+  /* Humane is very narrow, so a long page name still needs somewhere to
+     go on the smallest screens. */
+  overflow-wrap: break-word;
+}
+
+/* ----------------------------------------------------------------------
+   Reduced motion
+   A blanket rule so anything added later inherits the courtesy without
+   having to remember. Transitions are cut rather than removed entirely,
+   which keeps state changes legible instead of snapping.
+   ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

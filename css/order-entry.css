@@ -1,0 +1,624 @@
+/* ---------------------------------------------------------------------
+   Compact overrides — scoped to .oe-page so the shared cd-* classes
+   (from custom-design.css) stay untouched on custom-design.html.
+--------------------------------------------------------------------- */
+.oe-page .cd-section {
+  padding: 16px 16px 60px;
+}
+
+.oe-page .cd-container {
+  max-width: 1100px;
+}
+
+.oe-page .cd-input,
+.oe-page .cd-select {
+  padding: 9px 12px;
+  font-size: 13px;
+}
+
+.oe-page .cd-textarea {
+  min-height: 44px;
+}
+
+.oe-page .cd-tool-label {
+  font-size: 11px;
+}
+
+.oe-page .cd-tool-row {
+  gap: 8px;
+}
+
+.oe-page .cd-divider {
+  margin: 0;
+}
+
+.oe-page .cd-form-status {
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.oe-page .cd-btn {
+  padding: 10px 14px;
+  font-size: 12px;
+}
+
+.oe-page .cd-btn-large {
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.oe-page .cd-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.oe-page .cd-swatch {
+  width: 20px;
+  height: 20px;
+}
+
+.oe-page .cd-swatch.is-washed {
+  border-radius: 5px;
+}
+
+.oe-page .cd-swatch-group-label {
+  font-size: 9px;
+}
+
+.oe-page .cd-view-btn {
+  padding: 6px 14px;
+  font-size: 11px;
+}
+
+.oe-page .payment-option {
+  padding: 9px 12px;
+}
+
+.oe-page .payment-option-label {
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------------
+   Header — small internal-tool banner, replaces the site's usual hero.
+--------------------------------------------------------------------- */
+.oe-header {
+  padding: 22px 16px 4px;
+}
+
+.oe-header-inner {
+  max-width: 1100px;
+}
+
+.oe-header-title {
+  font-family: Anton, sans-serif;
+  color: var(--_color---white);
+  font-size: 26px;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.oe-header-note {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  line-height: 150%;
+  color: var(--_color---text-color-three);
+  max-width: 680px;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Layout
+--------------------------------------------------------------------- */
+.oe-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.oe-col {
+  flex: 1 1 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Product picker — search + photo grid + custom-item tile
+--------------------------------------------------------------------- */
+.oe-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+  gap: 6px;
+  max-height: 216px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  background-color: var(--_color---form-color);
+}
+
+.oe-product-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  text-align: center;
+  background: none;
+}
+
+.oe-product-tile:hover {
+  background-color: rgba(242, 233, 219, .05);
+}
+
+.oe-product-tile.is-selected {
+  border-color: var(--_color---dib-oringe);
+  box-shadow: 0 0 0 1px var(--_color---dib-oringe);
+}
+
+.oe-product-tile img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+  background-color: var(--_color---text-box-border);
+}
+
+.oe-product-tile-name {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 9px;
+  color: var(--_color---text-color);
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.oe-product-tile-price {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 9px;
+  color: var(--_color---dib-oringe);
+}
+
+.oe-custom-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  aspect-ratio: 1 / 1.25;
+  border: 1px dashed var(--_color---text-box-border);
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  text-align: center;
+  background: none;
+}
+
+.oe-custom-tile:hover,
+.oe-custom-tile.is-selected {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+.oe-grid-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  color: var(--_color---text-color-three);
+  padding: 16px 8px;
+}
+
+.oe-custom-fields[hidden] {
+  display: none;
+}
+
+.oe-custom-fields {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------------
+   Design mockup — front/back shirt preview with drag-drop / paste / upload
+--------------------------------------------------------------------- */
+.oe-mockup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 10px;
+  padding: 10px;
+  background-color: var(--_color---form-color);
+}
+
+.oe-mockup-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.oe-mockup-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.oe-mockup-stage {
+  position: relative;
+  width: 200px;
+  height: 290px;
+  border: 1px dashed var(--_color---text-box-border);
+  border-radius: 8px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.oe-mockup-stage.is-dragover {
+  border-color: var(--_color---dib-oringe);
+  box-shadow: 0 0 0 1px var(--_color---dib-oringe);
+}
+
+.oe-mockup-stage .canvas-container {
+  border-radius: 7px;
+  overflow: hidden;
+  max-width: 100% !important;
+}
+
+.oe-mockup-stage canvas {
+  max-width: 100%;
+}
+
+.oe-mockup-hint {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--_color---text-color-three);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------
+   Draft items (current order being built)
+--------------------------------------------------------------------- */
+.oe-draft-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.oe-draft-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.oe-draft-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.oe-draft-item-name {
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+}
+
+.oe-draft-item-variant,
+.oe-draft-item-notes {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  color: var(--_color---text-color-three);
+}
+
+.oe-draft-item-remove {
+  background: none;
+  border: none;
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.oe-draft-item-remove:hover {
+  color: var(--_color---dib-oringe);
+}
+
+.oe-empty-note {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  color: var(--_color---text-color-three);
+}
+
+.oe-subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---white);
+  border-top: 1px solid var(--_color---text-box-border);
+  padding-top: 8px;
+}
+
+.oe-checkbox-row[hidden] {
+  display: none;
+}
+
+.oe-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  color: var(--_color---text-color);
+}
+
+/* ---------------------------------------------------------------------
+   Small design thumbnails — used in draft items and the log table
+--------------------------------------------------------------------- */
+.oe-thumb-row {
+  display: flex;
+  gap: 5px;
+  margin-top: 3px;
+}
+
+.oe-thumb {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--_color---text-box-border);
+  display: block;
+}
+
+/* ---------------------------------------------------------------------
+   Order log
+--------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------
+   Voice note
+--------------------------------------------------------------------- */
+.oe-voice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oe-voice-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.oe-voice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oe-voice-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--_color---dib-oringe);
+  flex-shrink: 0;
+}
+
+.oe-voice-btn.is-recording {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+.oe-voice-btn.is-recording .oe-voice-dot {
+  animation: oe-pulse 1s ease-in-out infinite;
+}
+
+@keyframes oe-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .35; transform: scale(.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oe-voice-btn.is-recording .oe-voice-dot { animation: none; }
+}
+
+.oe-voice-timer {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  color: var(--_color---dib-oringe);
+}
+
+.oe-voice-playback[hidden] {
+  display: none;
+}
+
+.oe-voice-playback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oe-voice-playback audio {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+}
+
+.oe-voice-delete {
+  background: none;
+  border: none;
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.oe-voice-delete:hover {
+  color: var(--_color---dib-oringe);
+}
+
+.oe-voice-hint {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  line-height: 145%;
+  color: var(--_color---text-color-three);
+}
+
+.oe-voice-hint.is-error {
+  color: var(--_color---dib-oringe);
+}
+
+.oe-log-audio {
+  height: 32px;
+  max-width: 190px;
+  margin-top: 6px;
+  display: block;
+}
+
+.oe-log-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oe-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.oe-log-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.oe-log-actions .cd-btn {
+  padding: 8px 14px;
+  font-size: 11px;
+}
+
+.oe-log-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 10px;
+}
+
+.oe-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  color: var(--_color---text-color);
+  min-width: 760px;
+}
+
+.oe-log-table th {
+  text-align: left;
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--_color---text-color-three);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--_color---text-box-border);
+  white-space: nowrap;
+}
+
+.oe-log-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--_color---text-box-border);
+  vertical-align: top;
+}
+
+.oe-log-table tr:last-child td {
+  border-bottom: none;
+}
+
+.oe-log-table td.oe-empty-note {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.oe-log-customer-name {
+  color: var(--_color---white);
+}
+
+.oe-log-customer-phone {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  color: var(--_color---text-color-three);
+}
+
+.oe-log-tag {
+  display: inline-block;
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 6px;
+  background-color: rgba(123, 196, 127, .15);
+  color: #7bc47f;
+}
+
+.oe-log-tag.is-pending {
+  background-color: rgba(255, 74, 31, .15);
+  color: var(--_color---dib-oringe);
+}
+
+.oe-log-row-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.oe-row-btn {
+  background: none;
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 6px;
+  color: var(--_color---text-color);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+
+.oe-row-btn:hover {
+  border-color: var(--_color---dib-oringe);
+  color: var(--_color---dib-oringe);
+}
+
+@media screen and (max-width: 767px) {
+  .oe-layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+}

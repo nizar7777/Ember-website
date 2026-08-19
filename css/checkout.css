@@ -1,0 +1,232 @@
+.checkout-empty, .checkout-success {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--_color---text-color);
+  font-family: "IBM Plex Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.checkout-empty[hidden], .checkout-success[hidden], #checkout-layout[hidden] {
+  display: none;
+}
+
+.checkout-success-title {
+  font-family: Anton, sans-serif;
+  color: var(--_color---white);
+  font-size: 32px;
+  text-transform: uppercase;
+}
+
+.checkout-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.checkout-item {
+  display: flex;
+  gap: 16px;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.checkout-item-image {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: var(--line-bg);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* When the item has a resolvable colour, .checkout-item-image is a wrapper
+   div (mockup + design stacked) instead of a plain <img> — object-fit
+   above only affects the plain-<img> fallback case. */
+.checkout-item-mockup,
+.checkout-item-design {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.checkout-item-mockup {
+  object-fit: cover;
+}
+
+.checkout-item-design {
+  object-fit: contain;
+}
+
+.checkout-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout-item-name {
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.checkout-item-variant {
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.checkout-item-price {
+  color: var(--_color---dib-oringe);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.checkout-item-notes {
+  color: var(--_color---text-color-three);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: italic;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.checkout-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkout-subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 18px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--_color---text-box-border);
+}
+
+.checkout-subtotal-value {
+  color: var(--_color---dib-oringe);
+  font-family: "IBM Plex Mono", sans-serif;
+}
+
+.checkout-success-note {
+  color: var(--_color---dib-oringe);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 13px;
+}
+
+.payment-options {
+  display: flex;
+  gap: 12px;
+}
+
+.payment-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color .2s ease;
+}
+
+.payment-option:has(input:checked) {
+  border-color: var(--_color---dib-oringe);
+}
+
+.payment-option input {
+  accent-color: var(--_color---dib-oringe);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.payment-option-label {
+  color: var(--_color---white);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 14px;
+}
+
+.cliq-reminder {
+  background-color: #ff4a1f1a;
+  border: 1px solid var(--_color---dib-oringe);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: var(--_color---text-color);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  line-height: 160%;
+}
+
+.cliq-reminder a {
+  color: var(--_color---dib-oringe);
+}
+
+.cliq-reminder-link {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--_color---dib-oringe);
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.cliq-modal {
+  width: min(480px, 92vw);
+}
+
+.cliq-modal-body {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cliq-modal-text {
+  color: var(--_color---text-color);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 15px;
+  line-height: 150%;
+}
+
+.cliq-number {
+  font-family: "IBM Plex Mono", sans-serif;
+  font-size: 28px;
+  color: var(--_color---dib-oringe);
+  letter-spacing: .04em;
+  background-color: var(--_color---form-color);
+  border: 1px solid var(--_color---text-box-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.cliq-whatsapp-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
