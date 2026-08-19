@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ember — re-encode shirt mockups to WebP</title>
+  <style>
+    body { background:#171310; color:#f2e9db; font-family:"IBM Plex Mono",ui-monospace,monospace;
+           font-size:13px; line-height:1.6; padding:32px; max-width:900px; margin:0 auto; }
+    h1 { font-size:18px; letter-spacing:.04em; text-transform:uppercase; }
+    p  { color:#b6a99a; max-width:70ch; }
+    button { background:#ff4a1f; color:#171310; border:0; border-radius:20px;
+             padding:14px 24px; font:inherit; font-weight:500; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:default; }
+    table { border-collapse:collapse; width:100%; margin-top:24px; }
+    th,td { text-align:left; padding:6px 10px; border-bottom:1px solid #ffffff1a; }
+    th { color:#918475; font-weight:400; text-transform:uppercase; font-size:11px; }
+    .win  { color:#7fd18a; }
+    .fail { color:#ff6a45; }
+    tfoot td { font-weight:500; border-top:2px solid #ffffff33; }
+  </style>
+</head>
+<body>
+  <h1>Re-encode shirt mockups</h1>
+
+  <p>
+    The shirt mockups are 2402&times;3481 PNGs of 2&ndash;3.7&nbsp;MB each. They are
+    57% transparent, so JPEG is not an option &mdash; but WebP keeps the
+    alpha at a fraction of the size.
+  </p>
+  <p>
+    Windows has no WebP encoder that PowerShell can reach, so this page
+    borrows Chrome's: each mockup is drawn to a canvas, encoded with
+    <code>canvas.toDataURL('image/webp')</code>, and POSTed to the dev
+    server, which writes it next to the original. Originals are never
+    touched.
+  </p>
+  <p>
+    Run it with <code>serve.ps1</code> going, then open
+    <code>/tools/convert-mockups.html</code>. Re-run it any time new
+    mockups are added, then point <code>js/shirt-colors.js</code> at the
+    <code>.webp</code> files.
+  </p>
+
+  <p><button id="go">Convert all mockups</button></p>
+
+  <table>
+    <thead>
+      <tr><th>File</th><th>Before</th><th>After</th><th>Saved</th><th></th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+    <tfoot id="foot"></tfoot>
+  </table>
+
+<script>
+(function () {
+  "use strict";
+
+  // Every mockup referenced by js/shirt-colors.js. Root-relative, because
+  // this page lives in /tools/ and a bare "mockup/..." would resolve to
+  // /tools/mockup/.
+  var FILES = [
+    "/mockup/black front.png",  "/mockup/black back.png",
+    "/mockup/white front.png",  "/mockup/white back.png",
+    "/mockup/silver front.png", "/mockup/silver back.png",
+    "/mockup/green front.png",  "/mockup/green back.png",
+    "/mockup/peach front.png",  "/mockup/peach back.png",
+    "/mockup/stressed front.png", "/mockup/stressed back.png",
+    "/mockup/stressed light front.webp",
+    "/mockup/light washed shirt back.jfif"
+  ];
+
+  // The largest on-screen use is the design canvas at 800x1160 device
+  // pixels; the store card tops out near 564. 1000px wide covers both with
+  // room spare.
+  var MAX_W = 1000;
+  var QUALITY = 0.85;
+
+  var rows = document.getElementById("rows");
+  var foot = document.getElementById("foot");
+  var go = document.getElementById("go");
+
+  function kb(n) { return (n / 1024).toFixed(0) + " KB"; }
+
+  function sourceSize(src) {
+    return fetch(encodeURI(src)).then(function (r) {
+      return r.blob().then(function (b) { return b.size; });
+    }).catch(function () { return 0; });
+  }
+
+  function encode(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, MAX_W / img.width);
+        var w = Math.round(img.width * scale);
+        var h = Math.round(img.height * scale);
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, w, h);
+        var url = c.toDataURL("image/webp", QUALITY);
+        if (url.indexOf("data:image/webp") !== 0) {
+          reject(new Error("this browser did not encode WebP"));
+          return;
+        }
+        resolve({ b64: url.split(",")[1], w: w, h: h });
+      };
+      img.onerror = function () { reject(new Error("could not load " + src)); };
+      img.src = encodeURI(src);
+    });
+  }
+
+  function save(path, b64) {
+    return fetch("/__save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: path, b64: b64 })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("save failed (" + r.status + ")");
+      return r.text();
+    });
+  }
+
+  go.addEventListener("click", function () {
+    go.disabled = true;
+    rows.innerHTML = "";
+    foot.innerHTML = "";
+    var totalBefore = 0, totalAfter = 0;
+
+    FILES.reduce(function (chain, src) {
+      return chain.then(function () {
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + src.replace("/mockup/", "") + "</td><td>…</td><td>…</td><td></td><td></td>";
+        rows.appendChild(tr);
+
+        return sourceSize(src).then(function (before) {
+          return encode(src).then(function (out) {
+            // Save path is relative to the project root, which is what the
+            // server joins against.
+            var dest = src.replace(/^\//, "").replace(/\.[^.]+$/, "") + ".webp";
+            var after = Math.round(out.b64.length * 0.75);
+            return save(dest, out.b64).then(function () {
+              totalBefore += before;
+              totalAfter += after;
+              tr.cells[1].textContent = kb(before);
+              tr.cells[2].textContent = kb(after);
+              tr.cells[3].textContent = before ? "-" + (100 - (100 * after / before)).toFixed(0) + "%" : "";
+              tr.cells[4].innerHTML = '<span class="win">saved</span>';
+            });
+          });
+        }).catch(function (err) {
+          tr.cells[4].innerHTML = '<span class="fail">' + err.message + "</span>";
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      foot.innerHTML = "<tr><td>Total</td><td>" + kb(totalBefore) + "</td><td>" + kb(totalAfter) +
+        "</td><td>-" + (100 - (100 * totalAfter / totalBefore)).toFixed(0) + "%</td><td></td></tr>";
+      go.disabled = false;
+      window.__conversionDone = { before: totalBefore, after: totalAfter };
+    });
+  });
+})();
+</script>
+</body>
+</html>

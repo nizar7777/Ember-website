@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wholesale &amp; Corporate — Ember Clothing &amp; Uniform</title>
+  <meta content="Bulk uniforms, team kits and event merch from Ember, Amman. Tell us what you need and we'll come back with a quote." name="description">
+  <meta content="Wholesale &amp; Corporate — Ember Clothing &amp; Uniform" property="og:title">
+  <meta content="Bulk uniforms, team kits and event merch from Ember, Amman." property="og:description">
+  <meta content="https://ember-jo.netlify.app/images/og-ember.jpg" property="og:image">
+  <meta property="og:type" content="website">
+  <meta content="summary_large_image" name="twitter:card">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <!-- Meta Pixel — see js/meta-pixel.js -->
+  <script src="js/meta-pixel.js"></script>
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/ember-c38e0b.webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/tokens.css" rel="stylesheet" type="text/css">
+  <link href="css/custom-design.css" rel="stylesheet" type="text/css">
+  <link href="css/wholesale.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link href="images/favicon.png" rel="icon" type="image/png" sizes="32x32" media="(prefers-color-scheme: light)">
+  <link href="images/favicon-dark.png" rel="icon" type="image/png" sizes="32x32" media="(prefers-color-scheme: dark)">
+  <link href="images/webclip.png" rel="apple-touch-icon">
+  <link href="css/system.css" rel="stylesheet" type="text/css">
+</head>
+<body class="ws-standalone">
+  <!-- Standalone home for the wholesale form, for when the Spline object
+       (or any link) opens in a NEW TAB rather than on the homepage. The
+       popup itself is built by js/wholesale.js, so there's one copy of the
+       form, not two. -->
+  <a href="index.html" class="ws-standalone-logo" aria-label="Ember home">
+    <img src="images/Artboard-12_1.svg" alt="" width="46">
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/wholesale.js"></script>
+  <script>
+    // Open on load and keep it open — closing returns to the homepage
+    // rather than leaving an empty page behind.
+    window.EmberWholesale.open();
+    document.addEventListener("ember:wholesale-closed", function () {
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

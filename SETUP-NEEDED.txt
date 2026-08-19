@@ -1,0 +1,260 @@
+EMBER WEBSITE — SETUP CHECKLIST
+================================
+Paste your real values on the blank lines below, then send me this file
+(or just tell me the values in chat) and I'll wire them into the code.
+
+
+--------------------------------------------------------------------------
+1. CUSTOM DESIGN TOOL — EMAILJS   [DONE — connected and tested]
+   Sends a customer's finished shirt design + contact info to you by email.
+   File: js/custom-design.js
+
+   Public Key:  k3JiA55v8FK_YOnVU   [DONE]
+   Service ID:  service_2qyitxw  ("ember is" Gmail service)   [DONE]
+   Template ID: template_fyto9rs  (named "Custom Design")   [DONE]
+
+   Test sent 25 Jul 2026 — arrived OK. Check your Gmail for
+   "New custom design from TEST — Setup Verification 2" and delete it.
+
+   NOTE: the designs are emailed as JPEG, not PNG. EmailJS's free tier
+   caps each request at ~50KB and a PNG of the shirt canvas alone is
+   ~216KB, which failed. JPEG at 0.8 quality is ~17KB per view and looks
+   fine for a production reference. If you ever upgrade your EmailJS plan
+   and want max quality back, tell me and I'll switch it to PNG.
+
+
+--------------------------------------------------------------------------
+2. STORE PRODUCTS — GOOGLE SHEET
+   Lets you add/remove/edit store products without touching code.
+   File: js/store-products.js
+
+   Setup: create a Google Sheet, row 1 = column headers (any order):
+         Name | SKU | Price | Description | Category | Colors | Sizes |
+         Image | InStock | PreferredSide
+     - SKU: short code like EMB-001, so orders coming through the contact
+       form are easy to identify
+     - Category column must be exactly one of:
+         t-shirts, hoodies, uniform, keychains, posters, accessories
+       The store page groups these under 4 top-level filters, with the
+       specific category shown as a sub-filter when relevant:
+         Clothing -> t-shirts, hoodies
+         Uniform  -> uniform
+         Merch    -> keychains, posters
+         Accessories -> accessories
+       (see CATEGORY_GROUPS in js/store-products.js if you add a new
+       category and need to place it in one of these groups)
+     - Colors / Sizes: comma-separated, e.g. "Black, White, Olive"
+     - Image column: leave this BLANK for every normal product. The design
+       artwork is now pulled automatically from the S3 bucket at
+       <SKU>/<SKU>.png (built straight from the SKU column — see
+       defaultDesignUrl in js/store-products.js), so there is nothing to
+       paste in per row any more. Only fill this in to override a specific
+       product (different file extension, artwork not in the bucket, an
+       extra shot, etc.) — one or more full URLs, comma-separated; the
+       first becomes the card thumbnail.
+     - Photos column (optional): real photography of the finished product,
+       comma-separated if you have more than one. These are NOT mocked up
+       — they show as-is, alongside the generated mockup, in the "Buy
+       This" popup gallery.
+     - InStock: optional, put FALSE to hide a product without deleting it
+     - PreferredSide (optional): put "Back" for a design that's meant to be
+       worn as a back print — the card thumbnail and the "Buy This" popup
+       will open on the back mockup instead of front. Leave blank (or put
+       anything else) for a normal front print.
+     - Optional extra column: BuyLink (custom "Buy Now" link per product;
+       leave out to default to the contact form)
+     - Share -> General access -> "Anyone with the link" -> Viewer
+     - Copy the ID from the sheet's URL:
+         docs.google.com/spreadsheets/d/THIS_PART_HERE/edit
+
+   Copy-paste template for row 1 + one example row (tab-separated —
+   paste directly into cell A1 of the sheet):
+
+     Name	SKU	Price	Description	Category	Colors	Sizes	Image	Photos	InStock	PreferredSide
+     Amman Sight Tee	EMB-001	18 JOD	Streetwear tee inspired by the streets of Amman	t-shirts	Black, White, Olive	S, M, L, XL				TRUE
+
+   Sheet ID: 1z_XJpsE9YW-KezqgjsjHgp1c_Y4wkt5XojbNbVecVvE  [DONE — connected and working]
+   Tab gid: 1848685031  [DONE]
+
+   S3 BUCKET (2 Aug 2026): ember-products, region eu-north-1, public.
+   Object key pattern confirmed working: <SKU>/<SKU>.png (e.g. R-001/R-001.png
+   returns 200). Checked 6 SKUs — R-001, 7-001 and S-001 resolve; Si-001,
+   Ani-001, JO-001 and UH-001 currently 403 (either not uploaded yet, or the
+   folder name doesn't exactly match the SKU column's casing — S3 keys are
+   case-sensitive). Worth double-checking those folders once you've had a
+   chance to upload everything.
+
+   NOTE: the old placeholder your-bucket.s3.amazonaws.com URLs still sitting
+   in the Image column on the first 4 rows (RED LD, 7shm, Siren, Levi
+   Ackerman) now need to be DELETED, not replaced — an explicit Image value
+   overrides the automatic SKU-based lookup, so those 4 rows are currently
+   the only ones NOT picking up their real artwork from the bucket.
+
+
+--------------------------------------------------------------------------
+3. CHECKOUT — EMAILJS (second template)   [DONE — connected and tested]
+   Sends the customer's order (basket contents + delivery info + payment
+   method) to you.
+   File: js/checkout.js
+
+   Public Key:        (same as #1)   [DONE]
+   Service ID:        (same as #1)   [DONE]
+   Order Template ID: template_osqcg2x  (named "Store Order")   [DONE]
+
+   Test sent 25 Jul 2026 — arrived OK. Check your Gmail for
+   "New order from TEST — Setup Verification" and delete it.
+
+   Reminder on CliQ orders: {{payment_method}} arrives as either "Cash on
+   Delivery" or "CliQ". For CliQ, the customer sends you the payment
+   screenshot separately over WhatsApp (0790026860), not in this email.
+
+
+--------------------------------------------------------------------------
+4. JOURNAL / BLOG — GOOGLE SHEET (same spreadsheet, new tab)
+   Lets you post updates on the Events page without touching code.
+   File: js/blog-posts.js
+
+   Setup: in the SAME Google Sheet as your store products, add a new tab
+   named exactly "Blog". Row 1 = headers, one row per post:
+         Title | Date | Image | Excerpt
+     - Date: shown as typed, so write it however you want it displayed
+       (e.g. "July 2026")
+     - Image: the AWS S3 URL for that post's photo
+     - Excerpt: a short paragraph — this is a summary feed, not full
+       articles with their own pages
+   No sharing/ID setup needed — it reuses the store's sheet, which is
+   already connected. Just add the tab and rows.
+
+   Tab created?
+
+
+--------------------------------------------------------------------------
+4b. CONTACT FORM + NEWSLETTER — EMAILJS (third template)   [ACTION NEEDED]
+   Until now BOTH of these threw everything away. They were Webflow forms
+   with nowhere to post, so every enquiry and every newsletter signup was
+   silently discarded — the browser console logged "This page has
+   improperly configured forms" on every single page load.
+
+   They are now wired up (js/contact-forms.js) and just need a template.
+   One template covers both forms; {{subject}} tells you which one it was.
+
+   Setup: in the EmailJS dashboard create a new template using these
+   variables:
+       {{subject}}      "Website enquiry" or "Newsletter signup"
+       {{from_name}}    their name (— for newsletter signups)
+       {{from_email}}   their email
+       {{phone}}        their phone (— for newsletter signups)
+       {{message}}      their message
+       {{page}}         which page they submitted from
+
+   Then paste the template ID into js/contact-forms.js, on the line:
+       var EMAILJS_CONTACT_TEMPLATE_ID = "";
+
+   Template ID:
+
+   Until you fill that in, the forms do NOT fail silently any more —
+   they show the visitor your phone number and a WhatsApp link instead,
+   so an enquiry still reaches you.
+
+
+--------------------------------------------------------------------------
+5. SOCIAL MEDIA LINKS   [icons removed — waiting on real URLs]
+   These pointed at facebook.com, x.com, linkedin.com and pinterest.com —
+   the sites' own front pages, not your profiles. Anyone clicking one
+   landed on a login screen, so they've been taken down rather than left
+   sending customers nowhere.
+
+   In their place is a WhatsApp button on 0790026860, the same number the
+   checkout already uses for CliQ payments.
+
+   Paste any real profile URLs below and I'll put those icons back:
+
+   Instagram:
+   Facebook:
+   Twitter / X:
+   TikTok:
+
+   Instagram especially — order-entry.html exists because orders come in
+   through Instagram and WhatsApp, so it's odd that the site doesn't link
+   to the account those orders come from.
+
+
+--------------------------------------------------------------------------
+5b. EMAIL ADDRESS — PROBABLY NOT YOURS   [needs a decision]
+   The contact section and the page metadata both advertise
+       hello@ember.com
+   ember.com belongs to a US company that makes heated mugs. Unless you
+   have bought that domain, mail sent there does not reach you — and the
+   contact form's fallback message currently sends people to your phone
+   and WhatsApp instead, which do work.
+
+   Either give me the address you actually read, or say the word and I'll
+   drop the email row and leave phone + WhatsApp as the contact routes.
+
+   Real email address:
+
+
+--------------------------------------------------------------------------
+6. META PIXEL — ADS TRACKING   [DONE — installed and verified 1 Aug 2026]
+   Tells Facebook/Instagram which ads actually produce orders. Without it
+   you are spending blind.
+   File: js/meta-pixel.js  (loaded from the head of all 7 live pages)
+
+   Pixel ID:       1355083486805338  ("Ember Website")
+   Ad account:     act_2104778956966880  (portfolio "Ember Collection")
+   Timezone:       Asia/Amman        Currency: USD
+
+   Neither ID is a secret — the pixel ID is visible in your page source on
+   any site that runs one. Access tokens ARE secret and none are in here.
+
+   What fires:
+     PageView    every page
+     Lead        checkout submitted (carries the cart subtotal),
+                 custom design sent, wholesale quote sent, contact or
+                 newsletter form sent
+     AddToCart   product added from the store popup
+     Contact     any WhatsApp link clicked, anywhere on the site
+
+   Purchase is deliberately NEVER fired. Payment is cash on delivery or
+   CliQ, so at the moment someone submits checkout no money has moved —
+   calling that a purchase would make the ad reports lie to you. If you
+   want real paid-order tracking later it has to come from the offline
+   side, not from the website.
+
+   CURRENCY WARNING: your ad account is set to USD but you price in JOD.
+   Event values are sent as JOD with the currency code attached so Meta
+   converts them properly. Account currency cannot be changed once the
+   account has spent, so if you would rather report in JOD, say so before
+   you run the first campaign.
+
+   Verification test: three events (PageView, Contact, Lead 18 JOD) were
+   fired from localhost on 1 Aug 2026 to confirm the wiring. They are real
+   hits and will show in Events Manager — ignore them in your early data.
+
+   NOT set up: Conversions API. Browser-side tracking alone loses some
+   events to ad blockers and iPhone privacy settings. Worth adding later;
+   it needs a token that goes in an environment variable, never in this
+   folder.
+
+
+--------------------------------------------------------------------------
+KNOWN GAPS — not urgent, just flagging for later
+--------------------------------------------------------------------------
+- Events page (change-log.html) still has a "something's building"
+  placeholder hero since there's no real event info yet — the new
+  Journal section below it is ready for updates any time (see #4).
+- Basket + checkout are now built (localStorage-based, no backend),
+  with Cash on Delivery and CliQ payment options — see item #3 above to
+  finish connecting order submission by email.
+- There's still no real payment gateway — CliQ payments are confirmed
+  manually via a WhatsApp screenshot, and cash is collected on delivery.
+  Let me know if you ever want a real payment processor wired in instead.
+- order-confirmation.html and the product detail pages still ship blank
+  (standard for this kind of static export). Not used by the current
+  cart/checkout flow, so low priority.
+
+
+--------------------------------------------------------------------------
+ANYTHING ELSE — add your own notes/asks below, I'll pick them up
+--------------------------------------------------------------------------
+

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ember — re-encode site photos to WebP</title>
+  <style>
+    body { background:#171310; color:#f2e9db; font-family:"IBM Plex Mono",ui-monospace,monospace;
+           font-size:13px; line-height:1.6; padding:32px; max-width:960px; margin:0 auto; }
+    h1 { font-size:18px; letter-spacing:.04em; text-transform:uppercase; }
+    p  { color:#b6a99a; max-width:70ch; }
+    button { background:#ff4a1f; color:#171310; border:0; border-radius:20px;
+             padding:14px 24px; font:inherit; font-weight:500; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:default; }
+    table { border-collapse:collapse; width:100%; margin-top:24px; }
+    th,td { text-align:left; padding:6px 10px; border-bottom:1px solid #ffffff1a; }
+    th { color:#918475; font-weight:400; text-transform:uppercase; font-size:11px; }
+    .win  { color:#7fd18a; }
+    .fail { color:#ff6a45; }
+    tfoot td { font-weight:500; border-top:2px solid #ffffff33; }
+  </style>
+</head>
+<body>
+  <h1>Re-encode site photos</h1>
+
+  <p>
+    The homepage photos ship as PNGs up to 3.6&nbsp;MB, each with a chain of
+    Webflow-generated <code>srcset</code> variants beside it &mdash; 25&nbsp;MB
+    of images for a page that never shows any of them larger than about
+    700&nbsp;px.
+  </p>
+  <p>
+    This encodes one right-sized WebP per photo, using the largest source
+    available and a target width matched to how big it actually renders.
+    One good WebP replaces the whole variant chain. Originals are left
+    alone; the PNGs stay as masters and are dropped at build time.
+  </p>
+
+  <p><button id="go">Convert all photos</button></p>
+
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Out</th><th>Before</th><th>After</th><th>Saved</th><th></th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+    <tfoot id="foot"></tfoot>
+  </table>
+
+<script>
+(function () {
+  "use strict";
+
+  // src   — largest available master
+  // out   — file to write
+  // maxW  — roughly 2x the biggest size it ever renders at, for retina
+  var JOBS = [
+    { src: "/images/Team-Img-01.png",        out: "images/team-01.webp",     maxW: 800 },
+    { src: "/images/Team-Img-02.png",        out: "images/team-02.webp",     maxW: 800 },
+    { src: "/images/Team-Img-03.jpeg",       out: "images/team-03.webp",     maxW: 800 },
+    { src: "/images/Service-Item-Img.png",   out: "images/service-01.webp",  maxW: 700 },
+    { src: "/images/Service-Item-Img-02.png",out: "images/service-02.webp",  maxW: 700 },
+    { src: "/images/Service-Item-Img-03.png",out: "images/service-03.webp",  maxW: 700 },
+    { src: "/images/Service-Item-Img-04.png",out: "images/service-04.webp",  maxW: 700 },
+    { src: "/images/About-Img.png",          out: "images/about.webp",       maxW: 900 },
+    { src: "/images/Testimonial-Img.png",    out: "images/testimonial.webp", maxW: 900 },
+    // 4093px wide for a mark that renders at ~106px.
+    { src: "/images/Footer-Logo-Content.png",out: "images/footer-logo.webp", maxW: 320 },
+    { src: "/images/Artboard-4.jpg",         out: "images/hero-02.webp",     maxW: 500 },
+    { src: "/images/Artboard-5.png",         out: "images/hero-01.webp",     maxW: 500 }
+  ];
+
+  var QUALITY = 0.84;
+
+  // Social preview. Deliberately JPEG, not WebP: link scrapers are the one
+  // place WebP support is still patchy. Also 1200x630, the size every
+  // platform actually wants — the pages were previously sharing a portrait
+  // product photo, which gets cropped to something meaningless.
+  var OG_JOB = { src: "/images/Team-Img-01.png", out: "images/og-ember.jpg", w: 1200, h: 630 };
+
+  function buildOgImage() {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement("canvas");
+        c.width = OG_JOB.w; c.height = OG_JOB.h;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#171310";
+        ctx.fillRect(0, 0, c.width, c.height);
+        // cover-crop the source into the frame
+        var scale = Math.max(c.width / img.width, c.height / img.height);
+        var w = img.width * scale, h = img.height * scale;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, (c.width - w) / 2, (c.height - h) / 2, w, h);
+        var url = c.toDataURL("image/jpeg", 0.85);
+        resolve({ b64: url.split(",")[1], kb: Math.round(url.length * 0.75 / 1024) });
+      };
+      img.onerror = function () { reject(new Error("could not load OG source")); };
+      img.src = encodeURI(OG_JOB.src);
+    });
+  }
+
+  var rows = document.getElementById("rows");
+  var foot = document.getElementById("foot");
+  var go = document.getElementById("go");
+
+  function kb(n) { return (n / 1024).toFixed(0) + " KB"; }
+
+  function sourceSize(src) {
+    return fetch(encodeURI(src))
+      .then(function (r) { return r.blob().then(function (b) { return b.size; }); })
+      .catch(function () { return 0; });
+  }
+
+  function encode(src, maxW) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, maxW / img.width);
+        var w = Math.round(img.width * scale);
+        var h = Math.round(img.height * scale);
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, w, h);
+        var url = c.toDataURL("image/webp", QUALITY);
+        if (url.indexOf("data:image/webp") !== 0) { reject(new Error("no WebP encoder")); return; }
+        resolve({ b64: url.split(",")[1], w: w, h: h });
+      };
+      img.onerror = function () { reject(new Error("could not load")); };
+      img.src = encodeURI(src);
+    });
+  }
+
+  function save(path, b64) {
+    return fetch("/__save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: path, b64: b64 })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("save failed (" + r.status + ")");
+      return r.text();
+    });
+  }
+
+  go.addEventListener("click", function () {
+    go.disabled = true;
+    rows.innerHTML = ""; foot.innerHTML = "";
+    var totalBefore = 0, totalAfter = 0;
+
+    JOBS.reduce(function (chain, job) {
+      return chain.then(function () {
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + job.src.replace("/images/", "") + "</td><td>" +
+                       job.out.replace("images/", "") + "</td><td>…</td><td>…</td><td></td><td></td>";
+        rows.appendChild(tr);
+
+        return sourceSize(job.src).then(function (before) {
+          return encode(job.src, job.maxW).then(function (out) {
+            var after = Math.round(out.b64.length * 0.75);
+            return save(job.out, out.b64).then(function () {
+              totalBefore += before; totalAfter += after;
+              tr.cells[2].textContent = kb(before);
+              tr.cells[3].textContent = kb(after) + " (" + out.w + "px)";
+              tr.cells[4].textContent = before ? "-" + (100 - (100 * after / before)).toFixed(0) + "%" : "";
+              tr.cells[5].innerHTML = '<span class="win">saved</span>';
+            });
+          });
+        }).catch(function (err) {
+          tr.cells[5].innerHTML = '<span class="fail">' + err.message + "</span>";
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      // Social preview image, built last.
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>Team-Img-01.png</td><td>og-ember.jpg</td><td>—</td><td>…</td><td></td><td></td>";
+      rows.appendChild(tr);
+      return buildOgImage().then(function (og) {
+        return save(OG_JOB.out, og.b64).then(function () {
+          tr.cells[3].textContent = og.kb + " KB (1200x630)";
+          tr.cells[5].innerHTML = '<span class="win">saved</span>';
+        });
+      }).catch(function (err) {
+        tr.cells[5].innerHTML = '<span class="fail">' + err.message + "</span>";
+      });
+    }).then(function () {
+      foot.innerHTML = "<tr><td colspan='2'>Total</td><td>" + kb(totalBefore) + "</td><td>" +
+        kb(totalAfter) + "</td><td>-" + (100 - (100 * totalAfter / totalBefore)).toFixed(0) +
+        "%</td><td></td></tr>";
+      go.disabled = false;
+      window.__conversionDone = { before: totalBefore, after: totalAfter };
+    });
+  });
+})();
+</script>
+</body>
+</html>

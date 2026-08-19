@@ -1,0 +1,5 @@
+Name,SKU,Price,Description,Category,Colors,Sizes,Image,InStock
+Amman Sight Tee,EMB-001,18 JOD,Streetwear tee inspired by the streets of Amman,t-shirts,"Black, White, Olive","S, M, L, XL",https://your-bucket.s3.amazonaws.com/amman-sight-tee.jpg,TRUE
+Heavy Hoodie,EMB-002,32 JOD,Heavyweight hoodie with back print,hoodies,Black,"M, L, XL",https://your-bucket.s3.amazonaws.com/heavy-hoodie.jpg,TRUE
+Savage Tee,EMB-003,18 JOD,Graphic tee from the Savage series,t-shirts,"Black, Ash","S, M, L, XL",https://your-bucket.s3.amazonaws.com/savage-tee.jpg,TRUE
+Ember Keychain,EMB-004,6 JOD,Flame logo keychain,keychains,,,https://your-bucket.s3.amazonaws.com/ember-keychain.jpg,TRUE
